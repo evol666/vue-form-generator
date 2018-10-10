@@ -1,24 +1,30 @@
 <template lang="pug">
 div.vue-form-generator(v-if='schema != null')
-	fieldset(v-if="schema.fields", :is='tag')
-		template(v-for='field in fields')
-			form-group(v-if='fieldVisible(field)', :field="field", :errors="errors", :model="model", :options="options", @validated="onFieldValidated")
+	template(v-if='options.theme == "bootstrap"')
+		fieldset(v-if="schema.fields", :is='tag')
+			template(v-for='field in fields')
+				form-group(v-if='fieldVisible(field)', :field="field", :errors="errors", :model="model", :options="options", @validated="onFieldValidated")
 
-	template(v-for='group in groups')
-		fieldset(:is='tag', :class='getFieldRowClasses(group)')
-			legend(v-if='group.legend') {{ group.legend }}
-			template(v-for='field in group.fields')
-				form-group(v-if='fieldVisible(field)', :field="field", :errors="errors", :model="model", :options="options", @validated="onFieldValidated", @model-updated="onModelUpdated")
+		template(v-for='group in groups')
+			fieldset(:is='tag', :class='getFieldRowClasses(group)')
+				legend(v-if='group.legend') {{ group.legend }}
+				template(v-for='field in group.fields')
+					form-group(v-if='fieldVisible(field)', :field="field", :errors="errors", :model="model", :options="options", @validated="onFieldValidated", @model-updated="onModelUpdated")
+	template(v-else='options.theme == "element""')
+		el-form(v-if="schema.fields", :label-width='options.labelWidth')
+			template(v-for='field in fields')
+				form-group-element(v-if='fieldVisible(field)', :field="field", :errors="errors", :model="model", :options="options", @validated="onFieldValidated")
 </template>
 
 <script>
 import { get as objGet, forEach, isFunction, isNil, isArray } from "lodash";
 import formMixin from "./formMixin.js";
 import formGroup from "./formGroup.vue";
+import formGroupElement from "./formGroupElement.vue";
 
 export default {
 	name: "formGenerator",
-	components: { formGroup },
+	components: { formGroup, formGroupElement },
 	mixins: [formMixin],
 	props: {
 		schema: Object,
@@ -33,7 +39,8 @@ export default {
 					validateAsync: false,
 					validateAfterChanged: false,
 					validationErrorClass: "error",
-					validationSuccessClass: ""
+					validationSuccessClass: "",
+					theme: "bootstrap"
 				};
 			}
 		},
@@ -199,7 +206,8 @@ export default {
 			this.errors.splice(0);
 
 			forEach(this.$children, child => {
-				child.clearValidationErrors();
+				if (typeof child.clearValidationErrors === "function")
+					child.clearValidationErrors();
 			});
 		},
 	}
