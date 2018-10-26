@@ -8,14 +8,15 @@
       :multiple="schema.multiple"
       :limit="schema.limit"
       :on-exceed="schema.handleExceed"
-      :file-list="schema.fileList"
+      :file-list="fileList"
       :name="schema.inputName"
       :readonly="schema.readonly"
       :required="schema.required"
       :accept="schema.accept"
       :drag="schema.drag"
       :disabled="disabled"
-      @change="onChange"
+      :on-change="onChange"
+      :auto-upload="false"
     >
         <el-button v-if="!schema.drag" size="small" type="primary">{{schema.placeholder || "Click to upload"}}</el-button>
 
@@ -32,11 +33,21 @@ import { isFunction } from "lodash";
 
 export default {
 	mixins: [abstractField],
+	data: function () {
+		return {
+			fileList: []
+		};
+	},
 	methods: {
-		onChange($event) {
+		onChange(file, fileList) {
+			const event = {
+				target: {
+					name: this.schema.inputName,
+					files: fileList
+				}
+			};
 			if (isFunction(this.schema.onChanged)) {
-				// Schema has defined onChange method.
-				this.schema.onChanged.call(this, this.model, this.schema, $event, this);
+				this.schema.onChanged.call(this, this.model, this.schema, event, this);
 			}
 		}
 	}

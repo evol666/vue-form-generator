@@ -10,6 +10,7 @@ div.vue-form-generator(v-if='schema != null')
 				legend(v-if='group.legend') {{ group.legend }}
 				template(v-for='field in group.fields')
 					form-group(v-if='fieldVisible(field)', :field="field", :errors="errors", :model="model", :options="options", @validated="onFieldValidated", @model-updated="onModelUpdated")
+
 	template(v-else='options.theme == "element""')
 		el-form(v-if="schema.fields", :label-width='options.labelWidth')
 			template(v-for='field in fields')

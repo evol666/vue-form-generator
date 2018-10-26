@@ -91,7 +91,18 @@ export default {
 		},
 		// Get type of field 'field-xxx'. It'll be the name of HTML element
 		getFieldType(fieldSchema) {
-			return "field-" + fieldSchema.type;
+			const done = {"checkbox": "ElementCheckbox",
+				"input": "ElementInput",
+				"label": "ElementLabel",
+				"radios": "ElementRadios",
+				"select": "ElementSelect",
+				"textArea": "ElementTextArea",
+				"upload": "ElementUpload"};
+			if (fieldSchema.type in done) {
+				return "field-" + done[fieldSchema.type];
+			} else {
+				return "field-" + fieldSchema.type;
+			}
 		},
 		// Child field executed validation
 		onFieldValidated(res, errors, field) {

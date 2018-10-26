@@ -1,5 +1,10 @@
 var VueFormGenerator = window.VueFormGenerator;
-
+function fileUpload (model, schema, event, instance) {
+	console.log(event.target.files[0].raw instanceof File)
+	console.log(this.model['' + event.target.name])
+	this.model['' + event.target.name] = event.target.files
+	console.log(model)
+}
 var vm = new Vue({
 	el: "#app",
 	components: {
@@ -46,13 +51,16 @@ var vm = new Vue({
 		schema: {
 			fields: [
 				{
-					type: "elementUpload",
+					type: "upload",
 					label: "Upload",
 					model: "file",
-					url: "https://jsonplaceholder.typicode.com/posts/"
+					url: "https://jsonplaceholder.typicode.com/posts/",
+					multiple: false,
+					limit: 1,
+					onChanged: fileUpload
 				},
 				{
-					type: "elementInput",
+					type: "input",
 					inputType: "text",
 					label: "ID",
 					model: "id",
@@ -61,7 +69,7 @@ var vm = new Vue({
 					disabled: true
 				},
 				{
-					type: "elementInput",
+					type: "input",
 					inputType: "text",
 					label: "Name",
 					model: "name",
@@ -73,7 +81,7 @@ var vm = new Vue({
 					validator: VueFormGenerator.validators.string
 				},
 				{
-					type: "elementInput",
+					type: "input",
 					inputType: "password",
 					label: "Password",
 					model: "password",
@@ -83,7 +91,7 @@ var vm = new Vue({
 					validator: VueFormGenerator.validators.string
 				},	
 				{
-					type: "elementInput",
+					type: "input",
 					inputType: "email",
 					label: "E-mail",
 					model: "email",
@@ -91,7 +99,7 @@ var vm = new Vue({
 					validator: VueFormGenerator.validators.email
 				},
 				{
-					type: "elementCheckbox",
+					type: "checkbox",
 					label: "Status",
 					model: "status",
 					multi: true,
@@ -101,7 +109,7 @@ var vm = new Vue({
 					default: true
 				},
 				{
-					type: "elementSelect",
+					type: "select",
 					label: "Language",
 					model: "lang",
 					multiple: true,
@@ -117,7 +125,7 @@ var vm = new Vue({
 					}
 				},
 				{
-					type: "elementSelect",
+					type: "select",
 					label: "Skills",
 					model: "skill",
 					filterable: true,
