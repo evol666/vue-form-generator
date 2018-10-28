@@ -97,13 +97,27 @@
     <el-row type="flex" class="row-bg" justify="space-between">
       <el-col :span="3"></el-col>
       <el-col :span="18">
-        <div class="panel panel-default">
-          <div class="panel-heading">Form</div>
-          <div class="panel-body">
-            <vue-form-generator :schema="schema" :model="model" :options="formOptions"></vue-form-generator>
-            <el-button type="primary">Submit</el-button>
+        <el-card class="box-card">
+            <div slot="header" class="clearfix">
+              <span>Form</span>
+            </div>
+            <div class="text item">
+              <vue-form-generator :schema="schema" :model="model" :options="formOptions"></vue-form-generator>
+              <el-button type="primary">Submit</el-button>
+            </div>
+        </el-card>
+        <el-dialog title="Region Selector" :visible.sync="regionFormVisible">
+          <el-cascader
+            :options="regionOptions"
+            @active-item-change="handleRegionChange"
+            :props="regionProps"
+            :value="regionValue"
+          ></el-cascader>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="regionFormVisible = false">Cancel</el-button>
+            <el-button type="primary" @click="saveRegionValue(regionTarget, regionValue)">Save</el-button>
           </div>
-        </div>
+        </el-dialog>
       </el-col>
       <el-col :span="3"></el-col>
     </el-row>

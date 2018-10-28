@@ -18,6 +18,7 @@
         :step="schema.step"
         :width="schema.width"
         :files="schema.files"
+				@focus="onFocus"
     >
 
     </el-input>
@@ -86,6 +87,14 @@ export default {
 		onBlur() {
 			if (isFunction(this.debouncedFormatFunc)) {
 				this.debouncedFormatFunc.flush();
+			}
+		},
+		onFocus($event) {
+			$event.vfg = {
+				model: this.schema
+			};
+			if (isFunction(this.schema.onFocused)) {
+				this.schema.onFocused.call(this, this.model, this.schema, $event, this);
 			}
 		}
 	},
