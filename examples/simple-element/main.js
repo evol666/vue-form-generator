@@ -114,7 +114,8 @@ var vm = new Vue({
 						model: "id",
 						readonly: true,
 						featured: false,
-						disabled: true
+						disabled: true,
+						tooltip: 'Hi,<br/> please input your ID here.'
 					},
 					{
 						type: "input",
@@ -126,7 +127,8 @@ var vm = new Vue({
 						required: true,
 						disabled: false,
 						placeholder: "User's name",
-						validator: VueFormGenerator.validators.string
+						validator: VueFormGenerator.validators.string,
+						tooltip: 'This name must be same as... <br/>...'
 					},
 					{
 						type: "input",

@@ -5,15 +5,31 @@
     :for="getFieldID(field)"
     :class="field.labelClasses"
     :prop="getFieldID(field)">
-    <component ref="child" 
-      :is="getFieldType(field)"
-      :disabled="fieldDisabled(field)"
-      :model="model"
-      :schema="field"
-      :formOptions="options"
-      @model-updated="onModelUpdated"
-      @validated="onFieldValidated">
-    </component>
+    <template v-if="!field.tooltip">
+      <component ref="child" 
+        :is="getFieldType(field)"
+        :disabled="fieldDisabled(field)"
+        :model="model"
+        :schema="field"
+        :formOptions="options"
+        @model-updated="onModelUpdated"
+        @validated="onFieldValidated">
+      </component>
+    </template>
+    <template v-else>
+      <el-tooltip placement="top">
+		<div slot="content" v-html="field.tooltip"></div>
+        <component ref="child" 
+          :is="getFieldType(field)"
+          :disabled="fieldDisabled(field)"
+          :model="model"
+          :schema="field"
+          :formOptions="options"
+          @model-updated="onModelUpdated"
+          @validated="onFieldValidated">
+        </component>
+      </el-tooltip>
+    </template>
   </el-form-item>
 	<!-- <div class="form-group" :class="getFieldRowClasses(field)">
 		<label v-if="fieldTypeHasLabel(field)" :for="getFieldID(field)" :class="field.labelClasses">
