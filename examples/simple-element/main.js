@@ -64,6 +64,9 @@ var vm = new Vue({
 			this.model[target] = result
 			console.log(this.model)
 			this.regionFormVisible = false
+		},
+		submitConfig() {
+			console.log(this.model)
 		}
 	},
 
@@ -94,7 +97,8 @@ var vm = new Vue({
 				file: '',
 				dbo: new Date() + '',
 				motto: 'hello world',
-				region: ''
+				region: '',
+				add_input: 0
 			},
 			schema: {
 				fields: [
@@ -209,9 +213,15 @@ var vm = new Vue({
 						]
 					},
 					{
-						type: "elementTextArea",
+						type: "textArea",
 						label: 'Motto',
 						model: "motto"
+					},
+					{
+						type: "inputNumber",
+						label: 'Add Input',
+						model: "add_input",
+						min: 0
 					}
 				]
 			},
