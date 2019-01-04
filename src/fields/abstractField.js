@@ -213,6 +213,11 @@ export default {
 			return slugifyFormID(schema, idPrefix);
 		},
 
+		getSchema() {
+			return objGet(this.formOptions, "modele", "");			
+		},
+
+
 		getFieldClasses() {
 			return objGet(this.schema, "fieldClasses", []);
 		},
