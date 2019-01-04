@@ -1,6 +1,6 @@
 <template>
     <el-input
-        v-model="value"
+        :v-model="getSchema() +'_' + getFieldID(schema)"
         :disabled="disabled"
         :autocomplete="schema.autocomplete"
         :placeholder="schema.placeholder"
@@ -12,8 +12,6 @@
         :min="schema.min"
         :minlength="schema.minlength"
         :multiple="schema.multiple"
-        :name="schema.inputName"
-		:id="getFieldID(schema)"
         :size="schema.size"
         :src="schema.src"
         :step="schema.step"
