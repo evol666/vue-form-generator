@@ -12,7 +12,7 @@ div.vue-form-generator(v-if='schema != null')
 					form-group(v-if='fieldVisible(field)', :field="field", :errors="errors", :model="model", :options="options", @validated="onFieldValidated", @model-updated="onModelUpdated")
 
 	template(v-else='options.theme == "element""')
-		el-form(v-if="schema.fields", :label-width='options.labelWidth')
+		el-form(v-if="schema.fields", :label-width='options.labelWidth', :v-modele='options.modele')
 			template(v-for='field in fields')
 				form-group-element(v-if='fieldVisible(field)', :field="field", :errors="errors", :model="model", :options="options", @validated="onFieldValidated")
 </template>
