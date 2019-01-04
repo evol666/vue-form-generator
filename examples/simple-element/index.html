@@ -1,131 +1,238 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta charset="utf-8">
-  <title>Demo of vue-form-generator with Element UI</title>
-  <!-- element ui -->
-  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-  <link rel="stylesheet" type="text/css" href="../../dist/vfg-core.css">
+var VueFormGenerator = window.VueFormGenerator;
 
-  <style>
-      html {
-        font-family: Tahoma;
-        font-size: 14px;
-      }
+var vm = new Vue({
+	el: "#app",
+	components: {
+		"vue-form-generator": VueFormGenerator.component
+	},
 
-      body {
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        font-size: 14px;
-        line-height: 1.42857143;
-        color: #333;
-      }      
+	methods: {
+		prettyJSON: function(json) {
+			if (json) {
+				json = JSON.stringify(json, undefined, 4);
+				json = json.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+				return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+					var cls = "number";
+					if (/^"/.test(match)) {
+						if (/:$/.test(match)) {
+							cls = "key";
+						} else {
+							cls = "string";
+						}
+					} else if (/true|false/.test(match)) {
+						cls = "boolean";
+					} else if (/null/.test(match)) {
+						cls = "null";
+					}
+					return "<span class=\"" + cls + "\">" + match + "</span>";
+				});
+			}
+		},
+		fileUpload: function (model, schema, event, instance) {
+			console.log(event.target.files[0].raw instanceof File)
+			console.log(this.model['' + event.target.name])
+			this.model['' + event.target.name] = event.target.files
+			console.log(model)
+		},
+		inputSelect: function (model, schema, event, instance) {
+			this.regionTarget = event.vfg.model.model
+			this.regionFormVisible = true
+		},
+		handleRegionChange(val) {
+			console.log('active item:', val);
+			this.regionValue = val
+			setTimeout(_ => {
+				if (val.indexOf(0) > -1 && !this.regionOptions[0].children.length) {
+					this.regionOptions[0].children = [{
+						label: '南京',
+						value: 2
+					}];
+				} else if (val.indexOf(1) > -1 && !this.regionOptions[1].children.length) {
+					this.regionOptions[1].children = [{
+						label: '杭州',
+						value: 1
+					}];
+				}
+			}, 300);
+		},
+		saveRegionValue(target, val) {
+			var result = ''
+			for (var i in val)
+				result += val[i]
+			console.log(this.regionValue)
+			console.log(val)
+			this.model[target] = result
+			console.log(this.model)
+			this.regionFormVisible = false
+		},
+		submitConfig() {
+			console.log(this.model)
+		}
+	},
 
-      pre {
-        overflow: auto;
-      }
-        pre .string { color: #885800; }
-        pre .number { color: blue; }
-        pre .boolean { color: magenta; }
-        pre .null { color: red; }
-        pre .key { color: green; }    
-            
-      .container {
-        max-width: 970px;
-        padding-right: 15px;
-        padding-left: 15px;
-        margin-right: auto;
-        margin-left: auto;        
-      }
+	data: function () {
+		return {
+			regionFormVisible: false,
+			regionOptions: [{
+				label: '江苏',
+				value: 0,
+				children: []
+			}, {
+				label: '浙江',
+				value: 1,
+				children: []
+			}],
+			regionProps: {
+			},
+			regionValue: [],
+			regionTarget: '',
+			model: {
+				id: 1,
+				name: "John Doe",
+				password: "J0hnD03!x4",
+				skill: 'javascript',
+				email: "john.doe@gmail.com",
+				status: true,
+				lang: 'en-US',
+				file: '',
+				dbo: new Date() + '',
+				motto: 'hello world',
+				region: '',
+				add_input: 0
+			},
+			schema: {
+				fields: [
+					{
+						type: "upload",
+						label: "Upload",
+						model: "file",
+						url: "https://jsonplaceholder.typicode.com/posts/",
+						multiple: false,
+						limit: 1,
+						onChanged: this.fileUpload
+					},
+					{
+						type: "input",
+						inputType: "text",
+						label: "ID",
+						model: "id",
+						readonly: true,
+						featured: false,
+						disabled: true,
+						tooltip: 'Hi,<br/> please input your ID here.'
+					},
+					{
+						type: "input",
+						inputType: "text",
+						label: "Name",
+						model: "name",
+						readonly: false,
+						featured: true,
+						required: true,
+						disabled: false,
+						placeholder: "User's name",
+						validator: VueFormGenerator.validators.string,
+						tooltip: 'This name must be same as... <br/>...'
+					},
+					{
+						type: "input",
+						inputType: "password",
+						label: "Password",
+						model: "password",
+						min: 6,
+						required: true,
+						hint: "Minimum 6 characters",
+						validator: VueFormGenerator.validators.string
+					},	
+					{
+						type: "input",
+						inputType: "email",
+						label: "E-mail",
+						model: "email",
+						placeholder: "User's e-mail address",
+						validator: VueFormGenerator.validators.email
+					},
+					{
+						type: "input",
+						inputType: "text",
+						label: "Region",
+						model: "region",
+						onFocused: this.inputSelect
+					},
+					{
+						type: "checkbox",
+						label: "Status",
+						model: "status",
+						multi: true,
+						readonly: false,
+						featured: false,
+						disabled: false,
+						default: true
+					},
+					{
+						type: "select",
+						label: "Language",
+						model: "lang",
+						multiple: true,
+						filterable: true,
+						values: function() {
+							return [
+								{ id: "en-GB", name: "English (GB)" },
+								{ id: "en-US", name: "English (US)" },
+								{ id: "de", name: "German" },
+								{ id: "it", name: "Italic" },
+								{ id: "fr", name: "French" }
+							]
+						}
+					},
+					{
+						type: "select",
+						label: "Skills",
+						model: "skill",
+						filterable: true,
+						values: function() {
+							return [
+								{ id: "javascript", name: "Javascript" },
+								{ id: "en-GB", name: "English (GB)" },
+								{ id: "en-US", name: "English (US)" },
+								{ id: "de", name: "German" },
+								{ id: "it", name: "Italic" },
+								{ id: "fr", name: "French" }
+							]
+						}
+					},
+					{
+						type: "radios",
+						label: "Favorite Color",
+						model: "color",
+						values: [
+								{name: "Deep Pink", value:"#FF1493"},
+								{name: "Peach Puff", value:"#FFDAB9"},
+								{name: "Dark Orange", value:"#FF8C00"},
+								{name: "Light Green", value:"#90EE90"}
+						]
+					},
+					{
+						type: "textArea",
+						label: 'Motto',
+						model: "motto"
+					},
+					{
+						type: "inputNumber",
+						label: 'Add Input',
+						model: "add_input",
+						min: 0
+					}
+				]
+			},
 
-      h1 {
-        text-align: center;
-        font-size: 36px;
-        margin-top: 20px;
-        margin-bottom: 10px;
-        font-weight: 500;
-      }
-
-      fieldset {
-        border: 0;
-      }
-
-      .panel {
-        margin-bottom: 20px;
-        background-color: #fff;
-        border: 1px solid transparent;
-        border-radius: 4px;
-        -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
-        box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
-        border-color: #ddd;
-      }
-
-      .panel-heading {
-        color: #333;
-        background-color: #f5f5f5;
-        border-color: #ddd;
-
-        padding: 10px 15px;
-        border-bottom: 1px solid transparent;
-        border-top-left-radius: 3px;
-        border-top-right-radius: 3px;        
-      }
-
-      .panel-body {
-        padding: 15px;
-      }
-
-  </style>
-</head>
-
-<body>
-  <h1 class="text-center">Demo of vue-form-generator with Element UI</h1>
-  <div class="container" id="app">
-<!--     <div class="panel panel-default">
-      <div class="panel-heading">Form</div>
-      <div class="panel-body">
-        <vue-form-generator :schema="schema" :model="model" :options="formOptions"></vue-form-generator>
-      </div>
-    </div>
-
-    <div class="panel panel-default">
-      <div class="panel-heading">Model</div>
-      <div class="panel-body">
-        <pre v-if="model" v-html="prettyJSON(model)"></pre>
-      </div>
-    </div> -->
-    <el-row type="flex" class="row-bg" justify="space-between">
-      <el-col :span="3"></el-col>
-      <el-col :span="18">
-        <el-card class="box-card">
-            <div slot="header" class="clearfix">
-              <span>Form</span>
-            </div>
-            <div class="text item">
-              <vue-form-generator :schema="schema" :model="model" :options="formOptions"></vue-form-generator>
-              <el-button type="primary" @click="submitConfig">Submit</el-button>
-            </div>
-        </el-card>
-        <el-dialog title="Region Selector" :visible.sync="regionFormVisible">
-          <el-cascader
-            :options="regionOptions"
-            @active-item-change="handleRegionChange"
-            :props="regionProps"
-            :value="regionValue"
-          ></el-cascader>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="regionFormVisible = false">Cancel</el-button>
-            <el-button type="primary" @click="saveRegionValue(regionTarget, regionValue)">Save</el-button>
-          </div>
-        </el-dialog>
-      </el-col>
-      <el-col :span="3"></el-col>
-    </el-row>
-  </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.js"></script>
-  <script src="https://unpkg.com/vue/dist/vue.js"></script>
-  <script type="text/javascript" src="https://unpkg.com/element-ui/lib/index.js"></script>
-  <script type="text/javascript" src="../../dist/vfg-core.js"></script>
-  <script type="text/javascript" src="./main.js"></script>
-</body>
-</html>
+			formOptions: {
+				validateAfterLoad: true,
+				validateAfterChanged: true,
+				theme: 'element',
+				labelWidth: "100px",
+				modele: 'FormEdit'
+			}
+		}
+	}
+});
