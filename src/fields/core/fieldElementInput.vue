@@ -13,7 +13,7 @@
         :minlength="schema.minlength"
         :multiple="schema.multiple"
         :name="schema.inputName"
-		:id="schema.id"
+		:id="schema.schema+schema.inputName"
         :size="schema.size"
         :src="schema.src"
         :step="schema.step"
