@@ -13,7 +13,7 @@
         :minlength="schema.minlength"
         :multiple="schema.multiple"
         :name="schema.inputName"
-		:id="schema.schema+schema.inputName"
+		:id="getFieldID(schema)"
         :size="schema.size"
         :src="schema.src"
         :step="schema.step"
